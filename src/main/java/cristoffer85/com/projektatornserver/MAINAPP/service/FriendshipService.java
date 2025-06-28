@@ -21,11 +21,11 @@ public class FriendshipService {
     private UserRepository userRepository;
 
     public List<Friendship> getFriendRequests(User user) {
-        return friendshipRepository.findByFriendAndStatus(user, "PENDING");
+        return friendshipRepository.findByFriendIdAndStatus(user.getId(), "PENDING");
     }
 
     public List<SendOnlyUserNameDTO> getFriends(User user) {
-        return friendshipRepository.findByUserAndStatus(user, "ACCEPTED").stream()
+        return friendshipRepository.findByUserIdAndStatus(user.getId(), "ACCEPTED").stream()
                 .map(friendship -> new SendOnlyUserNameDTO(friendship.getFriend().getUsername()))
                 .collect(Collectors.toList());
     }
@@ -37,13 +37,15 @@ public class FriendshipService {
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         // Check if a friendship already exists with ACCEPTED status
-        List<Friendship> existingFriendships = friendshipRepository.findByUserAndFriendAndStatus(sender, receiver, "ACCEPTED");
+        List<Friendship> existingFriendships = friendshipRepository
+                .findByUserIdAndFriendIdAndStatus(sender.getId(), receiver.getId(), "ACCEPTED");
         if (!existingFriendships.isEmpty()) {
             throw new RuntimeException("You are already friends with this user");
         }
 
         // Check if a pending request already exists
-        List<Friendship> existingRequests = friendshipRepository.findByUserAndFriendAndStatus(sender, receiver, "PENDING");
+        List<Friendship> existingRequests = friendshipRepository
+                .findByUserIdAndFriendIdAndStatus(sender.getId(), receiver.getId(), "PENDING");
         if (!existingRequests.isEmpty()) {
             throw new RuntimeException("Friend request already sent");
         }
@@ -59,7 +61,7 @@ public class FriendshipService {
     }
 
     public List<Friendship> getOutgoingFriendRequests(User user) {
-        return friendshipRepository.findByUserAndStatus(user, "PENDING");
+        return friendshipRepository.findByUserIdAndStatus(user.getId(), "PENDING");
     }
 
     public Friendship respondToFriendRequest(String requestId, boolean accept) {
@@ -89,7 +91,7 @@ public class FriendshipService {
                 .orElseThrow(() -> new RuntimeException("Friend not found"));
 
         // Delete the friendship records for both users
-        friendshipRepository.deleteByUserAndFriend(user, friend);
-        friendshipRepository.deleteByUserAndFriend(friend, user);
+        friendshipRepository.deleteByUserIdAndFriendId(user.getId(), friend.getId());
+        friendshipRepository.deleteByUserIdAndFriendId(friend.getId(), user.getId());
     }
 }
