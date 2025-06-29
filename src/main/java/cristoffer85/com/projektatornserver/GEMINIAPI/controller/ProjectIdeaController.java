@@ -30,7 +30,7 @@ public class ProjectIdeaController {
     @PostMapping
     public ResponseEntity<List<String>> generateIdeas(@RequestBody ProjectIdeaRequestDTO params) {
         String prompt = String.format(
-            "Generate 6 short, creative programming project ideas for a %s project using %s, suitable for a project lasting up to %s weeks. List each idea as a short bullet point.",
+            "Generate 4 short, creative programming project ideas for a %s project using %s, suitable for a project lasting up to %s weeks. List each idea as a short bullet point.",
             params.type, params.languages, params.length
         );
         try {
