@@ -1,21 +1,19 @@
-package cristoffer85.com.projektatornserver.OPENAPI.controller;
+package cristoffer85.com.projektatornserver.GEMINIAPI.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-
-import cristoffer85.com.projektatornserver.OPENAPI.dto.ProjectIdeaRequestDTO;
-
+import cristoffer85.com.projektatornserver.GEMINIAPI.dto.ProjectIdeaRequestDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpEntity;
-import java.util.List;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -23,8 +21,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/project-ideas")
 public class ProjectIdeaController {
 
-    @Value("${openai.api.key}")
-    private String openaiApiKey;
+    @Value("${google.gemini.api.key}")
+    private String geminiApiKey;
 
     @PostMapping
     public ResponseEntity<List<String>> generateIdeas(@RequestBody ProjectIdeaRequestDTO params) {
@@ -33,46 +31,49 @@ public class ProjectIdeaController {
             params.type, params.languages, params.length
         );
 
-        List<String> ideas = callOpenAI(prompt, openaiApiKey);
+        List<String> ideas = callGemini(prompt, geminiApiKey);
         return ResponseEntity.ok(ideas);
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> callOpenAI(String prompt, String apiKey) {
+    private List<String> callGemini(String prompt, String apiKey) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Prepare request
-        Map<String, Object> request = new HashMap<>();
-        request.put("model", "gpt-3.5-turbo");
-        request.put("messages", List.of(Map.of("role", "user", "content", prompt)));
-        request.put("max_tokens", 500);
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey;
+
+        // Gemini expects a "contents" array with "parts"
+        Map<String, Object> requestBody = Map.of(
+            "contents", List.of(
+                Map.of("parts", List.of(Map.of("text", prompt)))
+            )
+        );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-        // Call OpenAI API
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-            "https://api.openai.com/v1/chat/completions",
+            url,
             org.springframework.http.HttpMethod.POST,
             entity,
             new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {}
         );
 
         Map<String, Object> body = response.getBody();
-        if (body == null) throw new RuntimeException("No response from OpenAI");
+        if (body == null) throw new RuntimeException("No response from Gemini");
 
-        List<Map<String, Object>> choices = (List<Map<String, Object>>) body.get("choices");
-        if (choices == null || choices.isEmpty()) throw new RuntimeException("No choices in OpenAI response");
+        List<Map<String, Object>> candidates = (List<Map<String, Object>>) body.get("candidates");
+        if (candidates == null || candidates.isEmpty()) throw new RuntimeException("No candidates in Gemini response");
 
-        Map<String, Object> firstChoice = choices.get(0);
-        Map<String, Object> message = (Map<String, Object>) firstChoice.get("message");
-        String content = (String) message.get("content");
+        Map<String, Object> firstCandidate = candidates.get(0);
+        Map<String, Object> content = (Map<String, Object>) firstCandidate.get("content");
+        List<Map<String, Object>> parts = (List<Map<String, Object>>) content.get("parts");
+        Map<String, Object> firstPart = parts.get(0);
+        String text = (String) firstPart.get("text");
 
-        // Split into ideas (assuming OpenAI returns a numbered or bulleted list)
-        return Arrays.stream(content.split("\n"))
+        // Split into ideas (assuming Gemini returns a bulleted or numbered list)
+        return Arrays.stream(text.split("\n"))
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
                 .collect(Collectors.toList());

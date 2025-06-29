@@ -1,4 +1,4 @@
-package cristoffer85.com.projektatornserver.OPENAPI.dto;
+package cristoffer85.com.projektatornserver.GEMINIAPI.dto;
 
 public class ProjectIdeaRequestDTO {
     public String type;
