@@ -58,7 +58,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> {
                 // --------------------------- PERMITTED FOR ALL --------------------------------
                 // = All users have access to /auth/**, /chat/**, /skiResort/**, and /api/maps/search endpoints
-                auth.requestMatchers("/auth/**", "/chat/**", "/api/map/**", "/quest/all").permitAll();
+                auth.requestMatchers("/auth/**", "/chat/**", "/api/project-ideas/**").permitAll();
 
                 // --------------------------- ROLE ENDPOINTS --------------------------------
                 // = ADMIN is the only role with access to /admin/** endpoint
