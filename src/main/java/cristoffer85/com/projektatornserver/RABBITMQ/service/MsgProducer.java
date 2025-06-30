@@ -21,8 +21,8 @@ public class MsgProducer {
         String queueName = "chat_" + msgDTO.getSender() + "_to_" + msgDTO.getReceiver() + "_Receiver";
         Queue queue = new Queue(queueName, false);
         rabbitAdmin.declareQueue(queue);
-        String message = msgDTO.getSender() + ":" + msgDTO.getReceiver() + ":" + msgDTO.getMessage();
-        rabbitTemplate.convertAndSend("chatQueue", message);
-        System.out.println("Message sent to " + queue.getName() + ": " + message);
+        String content = msgDTO.getSender() + ":" + msgDTO.getReceiver() + ":" + msgDTO.getContent();
+        rabbitTemplate.convertAndSend("chatQueue", content);
+        System.out.println("Message sent to " + queue.getName() + ": " + content);
     }
 }
