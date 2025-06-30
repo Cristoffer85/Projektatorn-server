@@ -13,6 +13,7 @@ public class ChatMessage {
 
     private String sender;
     private String receiver;
-    private String content;
+    private String contentForReceiver;
+    private String contentForSender;
     private Date timestamp = new Date();
 }

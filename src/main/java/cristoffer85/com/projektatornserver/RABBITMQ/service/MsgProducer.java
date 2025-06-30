@@ -18,11 +18,13 @@ public class MsgProducer {
     private RabbitAdmin rabbitAdmin;
 
     public void sendMsg(MsgDto msgDTO) {
+        // Optionally, declare the queue if you use dynamic queues
         String queueName = "chat_" + msgDTO.getSender() + "_to_" + msgDTO.getReceiver() + "_Receiver";
         Queue queue = new Queue(queueName, false);
         rabbitAdmin.declareQueue(queue);
-        String content = msgDTO.getSender() + ":" + msgDTO.getReceiver() + ":" + msgDTO.getContent();
-        rabbitTemplate.convertAndSend("chatQueue", content);
-        System.out.println("Message sent to " + queue.getName() + ": " + content);
+
+        // Send the DTO directly (no need to create a Map)
+        rabbitTemplate.convertAndSend("chatQueue", msgDTO);
+        System.out.println("Message sent to " + queue.getName() + ": " + msgDTO);
     }
 }

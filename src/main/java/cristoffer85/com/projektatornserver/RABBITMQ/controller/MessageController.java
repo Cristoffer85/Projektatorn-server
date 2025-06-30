@@ -39,7 +39,7 @@ public class MessageController {
     @PostMapping("/publish")
     public String pushMsgIntoQueue(@RequestBody MsgDto msgDTO) {
         msgProducer.sendMsg(msgDTO);
-        return "Message sent from " + msgDTO.getSender() + " to " + msgDTO.getReceiver() + ": " + msgDTO.getContent();
+        return "Message sent from " + msgDTO.getSender() + " to " + msgDTO.getReceiver();
     }
 
     @GetMapping("/subscribe/{user1}/{user2}")

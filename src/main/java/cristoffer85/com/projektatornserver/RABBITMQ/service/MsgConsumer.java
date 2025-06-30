@@ -4,6 +4,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cristoffer85.com.projektatornserver.RABBITMQ.dto.MsgDto;
 import cristoffer85.com.projektatornserver.RABBITMQ.model.ChatMessage;
 import cristoffer85.com.projektatornserver.RABBITMQ.repository.ChatMessageRepository;
 
@@ -23,37 +24,32 @@ public class MsgConsumer {
     private ChatMessageRepository chatMessageRepository;
 
     @RabbitListener(queues = "chatQueue")
-    public void receiveMessage(String message) {
-        String[] parts = message.split(":");
-        if (parts.length < 3) {
-            System.out.println("Invalid message format: " + message);
-            return;
-        }
-        String sender = parts[0].trim();
-        String receiver = parts[1].trim();
-        String msgContent = parts[2].trim();
-
+        public void receiveMessage(MsgDto msgDTO) {
+            try {
                 // Save to DB
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setSender(sender);
-        chatMessage.setReceiver(receiver);
-        chatMessage.setContent(msgContent);
-        chatMessage.setTimestamp(new Date());
-        chatMessageRepository.save(chatMessage);
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.setSender(msgDTO.getSender());
+                chatMessage.setReceiver(msgDTO.getReceiver());
+                chatMessage.setContentForReceiver(msgDTO.getContentForReceiver());
+                chatMessage.setContentForSender(msgDTO.getContentForSender());
+                chatMessage.setTimestamp(new Date());
+                chatMessageRepository.save(chatMessage);
 
-        String queueKey = sender.compareTo(receiver) < 0 
-            ? sender + "_" + receiver 
-            : receiver + "_" + sender;
+                String queueKey = msgDTO.getSender().compareTo(msgDTO.getReceiver()) < 0
+                    ? msgDTO.getSender() + "_" + msgDTO.getReceiver()
+                    : msgDTO.getReceiver() + "_" + msgDTO.getSender();
 
-        messages.computeIfAbsent(queueKey, k -> new ArrayList<>())
-                .add(sender + ": " + msgContent);
+                messages.computeIfAbsent(queueKey, k -> new ArrayList<>())
+                        .add(msgDTO.getSender() + ": [encrypted]");
 
-        // Update the per-sender unread count for the receiver:
-        unreadMessagesCountBySender.computeIfAbsent(receiver, k -> new ConcurrentHashMap<>())
-                .merge(sender, 1, Integer::sum);
+                unreadMessagesCountBySender.computeIfAbsent(msgDTO.getReceiver(), k -> new ConcurrentHashMap<>())
+                        .merge(msgDTO.getSender(), 1, Integer::sum);
 
-        System.out.println("Received message for " + queueKey + ": " + sender + ": " + msgContent);
-    }
+                System.out.println("Received message for " + queueKey + ": " + msgDTO.getSender() + " -> " + msgDTO.getReceiver());
+            } catch (Exception e) {
+                System.out.println("Failed to process message: " + e.getMessage());
+            }
+        }
 
     public List<String> getMessages(String queueKey) {
         return new ArrayList<>(messages.getOrDefault(queueKey, new ArrayList<>()));

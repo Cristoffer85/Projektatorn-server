@@ -6,5 +6,6 @@ import lombok.Data;
 public class MsgDto {
     private String sender;
     private String receiver;
-    private String content;
+    private String contentForReceiver;
+    private String contentForSender;
 }
