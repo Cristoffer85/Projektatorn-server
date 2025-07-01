@@ -1,5 +1,6 @@
 package cristoffer85.com.projektatornserver.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -8,15 +9,17 @@ import org.springframework.lang.NonNull;
 @Configuration
 public class OriginConfiguration implements WebMvcConfigurer {
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4300", "https://production-frontend-url.com")
+                .allowedOrigins(frontendUrl)
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
 }
-
 
 /* REMEMBER! To check the / in CORS-config for frontend! */
