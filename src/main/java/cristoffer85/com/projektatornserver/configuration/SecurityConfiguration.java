@@ -57,10 +57,9 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> {
                 // --------------------------- PERMITTED FOR ALL --------------------------------
-                // = All users have access to /auth/**, /chat/**, /skiResort/**, and /api/maps/search endpoints
+                // = All users have access to /auth/**, /api/project-ideas/**, user/request-password-reset, user/reset-password, and avatars/** endpoints
                 auth.requestMatchers(
-                    "/auth/**", 
-                                "/chat/**", 
+                    "/auth/**",  
                                 "/api/project-ideas/**", 
                                 "/user/request-password-reset",
                                 "/user/reset-password",
