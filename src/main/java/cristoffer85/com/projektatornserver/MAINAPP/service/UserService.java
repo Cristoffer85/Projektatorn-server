@@ -2,6 +2,7 @@ package cristoffer85.com.projektatornserver.MAINAPP.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.SendOnlyUserNameDTO;
 import cristoffer85.com.projektatornserver.MAINAPP.dto.UserUpdateDTO;
@@ -31,6 +33,13 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
+
+        // Token cleanup run to database (Runs every hour = 3600000 ms)
+        @Scheduled(fixedRate = 3600000)
+        public void cleanUpExpiredPasswordResetTokens() {
+            Date now = new Date();
+            passwordResetRepository.deleteByExpiryBefore(now);
+        }
 
     public User getOneUser(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));

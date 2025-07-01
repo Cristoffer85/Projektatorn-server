@@ -12,4 +12,5 @@ public interface FriendshipRepository extends MongoRepository<Friendship, String
     List<Friendship> findByFriendIdAndStatus(String friendId, String status);
     List<Friendship> findByUserIdAndFriendIdAndStatus(String userId, String friendId, String status);
     void deleteByUserIdAndFriendId(String userId, String friendId);
+    void deleteByUserUsernameAndFriendUsernameAndStatus(String userUsername, String friendUsername, String status);
 }

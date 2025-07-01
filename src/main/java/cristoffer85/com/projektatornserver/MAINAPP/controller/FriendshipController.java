@@ -62,6 +62,11 @@ public class FriendshipController {
         return friendshipService.respondToFriendRequest(requestId, accept);
     }
 
+    @DeleteMapping("/withdraw-friend-request")
+    public void withdrawFriendRequest(@RequestParam String fromUsername, @RequestParam String toUsername) {
+        friendshipService.withdrawFriendRequest(fromUsername, toUsername);
+    }
+
     @DeleteMapping("/remove-friend")
     public void removeFriend(@RequestParam String username, @RequestParam String friendUsername) {
         friendshipService.removeFriend(username, friendUsername);
