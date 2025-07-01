@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.RegistrationDTO;
-import cristoffer85.com.projektatornserver.MAINAPP.dto.UserUpdateDTO;
+// import cristoffer85.com.projektatornserver.MAINAPP.dto.UserUpdateDTO;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 
@@ -31,18 +31,20 @@ public class AdminService {
         return authenticationService.registerUser(body.getUsername(), body.getPassword());
     }
 
+    /*
     public User updateUser(String username, UserUpdateDTO userUpdateDTO) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser != null) {
-            existingUser.setBirthday(userUpdateDTO.getBirthday());
-            existingUser.setAddress(userUpdateDTO.getAddress());
-            existingUser.setTelephone(userUpdateDTO.getTelephone());
+            existingUser.setBirthdate(userUpdateDTO.getBirthdate());
             existingUser.setEmail(userUpdateDTO.getEmail());
-
+            existingUser.setForestanimal(userUpdateDTO.getForestanimal());
+            existingUser.setSoursnack(userUpdateDTO.getSoursnack());
+            existingUser.setAvatar(userUpdateDTO.getAvatar());
             return userRepository.save(existingUser);
         }
         return null;
     }
+    */
 
     public void deleteOneUser(String username) {
         userRepository.deleteByUsername(username);

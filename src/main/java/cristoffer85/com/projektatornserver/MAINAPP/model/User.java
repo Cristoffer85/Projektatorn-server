@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
+import java.time.YearMonth;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,18 +22,19 @@ public class User implements UserDetails {
 
     @Id
     private String id;
-
     private String username;
     private String password;
+
     private String email;
-    private String telephone;
+    private String forestanimal;
+    private String soursnack;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date birthday;
+    private String avatar;
 
-    private String address;
-    private String budgetId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
+    private YearMonth birthdate;
 
+    //------ Authority/roles ------
     @DBRef
     private Set<Role> authorities = new HashSet<>();
 
@@ -42,7 +43,9 @@ public class User implements UserDetails {
     public Set<Role> getAuthorities() {
         return this.authorities;
     }
+    // -----------------------------
 
+    // ------ Account status methods ------
     @Override
     public boolean isAccountNonExpired() { return true; }
 

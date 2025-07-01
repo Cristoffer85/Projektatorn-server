@@ -1,24 +1,24 @@
-package cristoffer85.com.projektatornserver.RABBITMQ.E2EENCRYPTION.controller;
+package cristoffer85.com.projektatornserver.E2EENCRYPTION.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import cristoffer85.com.projektatornserver.RABBITMQ.E2EENCRYPTION.model.EncryptedPrivateKeyEntity;
-import cristoffer85.com.projektatornserver.RABBITMQ.E2EENCRYPTION.repository.EncryptedPrivateKeyRepository;
+import cristoffer85.com.projektatornserver.E2EENCRYPTION.model.PrivateKey;
+import cristoffer85.com.projektatornserver.E2EENCRYPTION.repository.PrivateKeyRepository;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/private-key")
-public class EncryptedPrivateKeyController {
+public class PrivateKeyController {
 
     @Autowired
-    private EncryptedPrivateKeyRepository encryptedPrivateKeyRepository;
+    private PrivateKeyRepository encryptedPrivateKeyRepository;
 
     @PostMapping("/{username}/encrypted-private-key")
     public ResponseEntity<?> uploadEncryptedPrivateKey(@PathVariable String username, @RequestBody Map<String, String> encrypted) {
-        EncryptedPrivateKeyEntity entity = new EncryptedPrivateKeyEntity();
+        PrivateKey entity = new PrivateKey();
         entity.setUsername(username);
         entity.setCiphertext(encrypted.get("ciphertext"));
         entity.setSalt(encrypted.get("salt"));
@@ -29,7 +29,7 @@ public class EncryptedPrivateKeyController {
 
     @GetMapping("/{username}/encrypted-private-key")
     public ResponseEntity<Map<String, String>> getEncryptedPrivateKey(@PathVariable String username) {
-        EncryptedPrivateKeyEntity entity = encryptedPrivateKeyRepository.findById(username).orElse(null);
+        PrivateKey entity = encryptedPrivateKeyRepository.findById(username).orElse(null);
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
