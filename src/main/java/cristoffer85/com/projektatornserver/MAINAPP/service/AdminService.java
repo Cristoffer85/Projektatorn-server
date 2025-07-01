@@ -28,7 +28,7 @@ public class AdminService {
     }
 
     public User registerUser(RegistrationDTO body){
-        return authenticationService.registerUser(body.getUsername(), body.getPassword());
+        return authenticationService.registerUser(body.getUsername(), body.getPassword(), body.getEmail());
     }
 
     /*

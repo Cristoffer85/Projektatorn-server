@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationDTO {          // Class that Registers the username and password as Data-Transfer-Object, to a String
+public class RegistrationDTO {
     private String username;
     private String password;
+    private String email;
 
     @Override
     public String toString() {

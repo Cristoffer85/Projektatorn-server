@@ -44,7 +44,7 @@ public class AuthenticationService {                // Class that handles Regist
     @Autowired
     private TokenService tokenService;
 
-    public User registerUser(String username, String password) {
+    public User registerUser(String username, String password, String email) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username '" + username + "' already exists. Please choose a different username.");
         }
@@ -59,6 +59,7 @@ public class AuthenticationService {                // Class that handles Regist
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(encodedPassword);
+        newUser.setEmail(email);
         newUser.setAuthorities(authorities);
 
         return userRepository.save(newUser);

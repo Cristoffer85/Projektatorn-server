@@ -25,7 +25,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegistrationDTO body) {
         try {
-            User user = authenticationService.registerUser(body.getUsername(), body.getPassword());
+            User user = authenticationService.registerUser(body.getUsername(), body.getPassword(), body.getEmail());
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

@@ -80,6 +80,12 @@
             <version>4.12.0</version>
         </dependency>
 
+        <!-- Java Mail, for password recovery sending -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
     <!-- #################### Microservice #################### -->
         <!-- RabbitMQ -->
         <dependency>
