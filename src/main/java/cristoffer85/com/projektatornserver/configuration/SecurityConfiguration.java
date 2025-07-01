@@ -63,7 +63,8 @@ public class SecurityConfiguration {
                                 "/chat/**", 
                                 "/api/project-ideas/**", 
                                 "/user/request-password-reset",
-                                "/user/reset-password")
+                                "/user/reset-password",
+                                "/avatars/**")
                     .permitAll();
 
                 // --------------------------- ROLE ENDPOINTS --------------------------------
