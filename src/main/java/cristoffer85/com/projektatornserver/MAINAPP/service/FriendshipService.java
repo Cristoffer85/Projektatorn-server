@@ -85,10 +85,12 @@ public class FriendshipService {
     }
 
     public void withdrawFriendRequest(String fromUsername, String toUsername) {
-        // Find the pending friend request from fromUsername to toUsername and delete it
-        // (Assuming you have a repository and model for friend requests)
-        friendshipRepository.deleteByUserUsernameAndFriendUsernameAndStatus(
-            fromUsername, toUsername, "PENDING"
+        User fromUser = userRepository.findByUsername(fromUsername)
+            .orElseThrow(() -> new RuntimeException("User not found: " + fromUsername));
+        User toUser = userRepository.findByUsername(toUsername)
+            .orElseThrow(() -> new RuntimeException("User not found: " + toUsername));
+        friendshipRepository.deleteByUserIdAndFriendIdAndStatus(
+            fromUser.getId(), toUser.getId(), "PENDING"
         );
     }
 
