@@ -46,7 +46,7 @@ public class UserService {
     public User updateUser(String username, UserUpdateDTO userUpdateDto) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         user.setEmail(userUpdateDto.getEmail());
-        user.setBirthdate(userUpdateDto.getBirthdate());
+        user.setBirthday(userUpdateDto.getBirthday());
         user.setForestanimal(userUpdateDto.getForestanimal());
         user.setSoursnack(userUpdateDto.getSoursnack());
         user.setAvatar(userUpdateDto.getAvatar());

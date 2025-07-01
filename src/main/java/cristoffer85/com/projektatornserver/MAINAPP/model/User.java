@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.YearMonth;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,8 +31,8 @@ public class User implements UserDetails {
 
     private String avatar;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
-    private YearMonth birthdate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date birthday;
 
     //------ Authority/roles ------
     @DBRef
