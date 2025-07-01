@@ -6,6 +6,7 @@ import cristoffer85.com.projektatornserver.MAINAPP.model.Friendship;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
 import cristoffer85.com.projektatornserver.MAINAPP.service.FriendshipService;
 import cristoffer85.com.projektatornserver.MAINAPP.service.UserService;
+import cristoffer85.com.projektatornserver.RABBITMQ.repository.ChatMessageRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,9 @@ public class FriendshipController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
     @GetMapping("/friend-requests/{username}")
     public List<FriendRequestDTO> getFriendRequests(@PathVariable String username) {
@@ -61,5 +65,6 @@ public class FriendshipController {
     @DeleteMapping("/remove-friend")
     public void removeFriend(@RequestParam String username, @RequestParam String friendUsername) {
         friendshipService.removeFriend(username, friendUsername);
+        chatMessageRepository.deleteBySenderAndReceiverOrReceiverAndSender(username, friendUsername, username, friendUsername);
     }
 }

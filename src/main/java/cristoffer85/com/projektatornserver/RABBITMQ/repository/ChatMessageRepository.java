@@ -8,4 +8,8 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     List<ChatMessage> findBySenderAndReceiverOrReceiverAndSenderOrderByTimestamp(
         String sender1, String receiver1, String sender2, String receiver2
     );
+
+    void deleteBySenderAndReceiverOrReceiverAndSender(
+        String sender1, String receiver1, String sender2, String receiver2
+    );
 }
