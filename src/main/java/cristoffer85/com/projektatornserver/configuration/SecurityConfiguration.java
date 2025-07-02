@@ -70,11 +70,11 @@ public class SecurityConfiguration {
                 // = ADMIN is the only role with access to /admin/** endpoint
                 auth.requestMatchers("/admin/**").hasRole("ADMIN");
 
-                // = ADMIN and USER are roles with access to /user/** endpoint
-                auth.requestMatchers("/user/**").hasAnyRole("ADMIN", "USER");
-
-                // Allow access to /quest/** for ADMIN and USER roles
-                auth.requestMatchers("/quest/**").hasAnyRole("ADMIN", "USER");
+                // = ADMIN and USER are roles with access to endpoints:
+                auth.requestMatchers(
+                    "/user/**", 
+                                "/projects-in-progress/**")
+                    .hasAnyRole("ADMIN", "USER");
 
                 // All other requests require authentication
                 auth.anyRequest().authenticated();

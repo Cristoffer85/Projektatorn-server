@@ -1,7 +1,7 @@
 TODO:
 -----------------------------------
-
-
+* Email confirmation upon both registration and email update 
+ - (to ensure correct mail if password forgotten)
 
 
 
