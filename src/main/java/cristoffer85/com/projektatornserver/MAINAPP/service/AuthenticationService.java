@@ -16,15 +16,20 @@ import cristoffer85.com.projektatornserver.MAINAPP.model.Admin;
 import cristoffer85.com.projektatornserver.MAINAPP.model.Role;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.AdminRepository;
+import cristoffer85.com.projektatornserver.MAINAPP.repository.EmailVerificationTokenRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.RoleRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ Class that handles registration and login of user and admins.
+*/
+
 @Service
 @Transactional
-public class AuthenticationService {                // Class that handles Registration of new user and employee, and login (Authenticates that they are valid) Uses LoginResponseDTO among others
+public class AuthenticationService {
 
     @Autowired
     private UserRepository userRepository;
@@ -44,6 +49,12 @@ public class AuthenticationService {                // Class that handles Regist
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private EmailVerificationTokenRepository emailVerificationTokenRepository;
+
+    @Autowired
+    private EmailService emailService;
+
     public User registerUser(String username, String password, String email) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username '" + username + "' already exists. Please choose a different username.");
@@ -61,8 +72,22 @@ public class AuthenticationService {                // Class that handles Regist
         newUser.setPassword(encodedPassword);
         newUser.setEmail(email);
         newUser.setAuthorities(authorities);
+        newUser.setVerified(false); // Require email verification
 
-        return userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
+
+        // Generate and save verification token
+        String token = java.util.UUID.randomUUID().toString();
+        var verificationToken = new cristoffer85.com.projektatornserver.MAINAPP.model.EmailVerificationToken();
+        verificationToken.setToken(token);
+        verificationToken.setUsername(savedUser.getUsername());
+        verificationToken.setExpiry(java.time.Instant.now().plus(24, java.time.temporal.ChronoUnit.HOURS));
+        emailVerificationTokenRepository.save(verificationToken);
+
+        // Send verification email
+        emailService.sendVerificationEmail(savedUser.getEmail(), token);
+
+        return savedUser;
     }
 
     public LoginResponseDTO loginUser(String username, String password) {

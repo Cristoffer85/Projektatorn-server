@@ -14,8 +14,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.SendOnlyUserNameDTO;
 import cristoffer85.com.projektatornserver.MAINAPP.dto.UserUpdateDTO;
+import cristoffer85.com.projektatornserver.MAINAPP.model.EmailVerificationToken;
 import cristoffer85.com.projektatornserver.MAINAPP.model.PasswordReset;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
+import cristoffer85.com.projektatornserver.MAINAPP.repository.EmailVerificationTokenRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.PasswordResetRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 
@@ -29,17 +31,20 @@ public class UserService {
     private PasswordResetRepository passwordResetRepository;
 
     @Autowired
+    private EmailVerificationTokenRepository emailVerificationTokenRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EmailService emailService;
 
-        // Token cleanup run to database (Runs every hour = 3600000 ms)
-        @Scheduled(fixedRate = 3600000)
-        public void cleanUpExpiredPasswordResetTokens() {
-            Date now = new Date();
-            passwordResetRepository.deleteByExpiryBefore(now);
-        }
+    // Token cleanup run to database (Runs every hour = 3600000 ms)
+    @Scheduled(fixedRate = 3600000)
+    public void cleanUpExpiredPasswordResetTokens() {
+        Date now = new Date();
+        passwordResetRepository.deleteByExpiryBefore(now);
+    }
 
     public User getOneUser(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
@@ -53,12 +58,40 @@ public class UserService {
     }
 
     public User updateUser(String username, UserUpdateDTO userUpdateDto) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setEmail(userUpdateDto.getEmail());
-        user.setBirthday(userUpdateDto.getBirthday());
-        user.setForestanimal(userUpdateDto.getForestanimal());
-        user.setSoursnack(userUpdateDto.getSoursnack());
-        user.setAvatar(userUpdateDto.getAvatar());
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Handle email change with verification
+        if (userUpdateDto.getEmail() != null && !userUpdateDto.getEmail().equals(user.getEmail())) {
+            user.setPendingEmail(userUpdateDto.getEmail());
+            userRepository.save(user);
+
+            // Generate and save verification token
+            String token = UUID.randomUUID().toString();
+            EmailVerificationToken verificationToken = new EmailVerificationToken();
+            verificationToken.setToken(token);
+            verificationToken.setUsername(username);
+            verificationToken.setExpiry(Instant.now().plus(24, ChronoUnit.HOURS));
+            emailVerificationTokenRepository.save(verificationToken);
+
+            emailService.sendVerificationEmail(userUpdateDto.getEmail(), token);
+            // Do NOT update user.setEmail here!
+        }
+
+        // Update other fields immediately
+        if (userUpdateDto.getBirthday() != null) {
+            user.setBirthday(userUpdateDto.getBirthday());
+        }
+        if (userUpdateDto.getForestanimal() != null) {
+            user.setForestanimal(userUpdateDto.getForestanimal());
+        }
+        if (userUpdateDto.getSoursnack() != null) {
+            user.setSoursnack(userUpdateDto.getSoursnack());
+        }
+        if (userUpdateDto.getAvatar() != null) {
+            user.setAvatar(userUpdateDto.getAvatar());
+        }
+
         return userRepository.save(user);
     }
 

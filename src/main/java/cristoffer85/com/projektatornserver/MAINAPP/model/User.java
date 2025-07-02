@@ -24,15 +24,17 @@ public class User implements UserDetails {
     private String id;
     private String username;
     private String password;
+    private boolean verified = false;
 
     private String email;
+    private String pendingEmail;
+    
     private String forestanimal;
     private String soursnack;
-
-    private String avatar;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthday;
+
+    private String avatar;
 
     //------ Authority/roles ------
     @DBRef
