@@ -23,7 +23,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-        public void sendProjectNotificationEmail(String to, String fromUser, String projectIdea) {
+    public void sendProjectNotificationEmail(String to, String fromUser, String projectIdea) {
         String subject = "New Project Shared With You";
         String text = "Hi!\n\n" +
                     fromUser + " has shared a new project with you: \"" + projectIdea + "\".\n" +
