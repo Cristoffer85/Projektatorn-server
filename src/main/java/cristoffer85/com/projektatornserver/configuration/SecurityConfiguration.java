@@ -8,7 +8,6 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
 import cristoffer85.com.projektatornserver.MAINAPP.utils.RSAKeyProperties;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,34 +56,32 @@ public class SecurityConfiguration {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> {
+                // --------------------------- PERMITTED FOR ALL --------------------------------
+                // = Anyone have access to:
                 auth.requestMatchers(
                     "/auth/**",  
-                    "/api/project-ideas/**", 
-                    "/user/request-password-reset",
-                    "/user/reset-password",
-                    "/avatars/**")
+                                "/api/project-ideas/**", 
+                                "/user/request-password-reset",
+                                "/user/reset-password",
+                                "/avatars/**")
                     .permitAll();
+
+                // --------------------------- ROLE ENDPOINTS --------------------------------
+                // = ADMIN is the only role with access to /admin/** endpoint
                 auth.requestMatchers("/admin/**").hasRole("ADMIN");
+
+                // = ADMIN and USER are roles with access to endpoints:
                 auth.requestMatchers(
                     "/user/**", 
-                    "/projects-in-progress/**")
+                                "/projects-in-progress/**")
                     .hasAnyRole("ADMIN", "USER");
+
+                // All other requests require authentication
                 auth.anyRequest().authenticated();
             })
-            // ADD THIS:
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt
-                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                )
-                .authenticationEntryPoint((request, response, authException) -> {
-                    // Only require JWT for protected endpoints
-                    if (request.getRequestURI().startsWith("/auth/")) {
-                        response.setStatus(HttpServletResponse.SC_OK);
-                    } else {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-                    }
-                })
-            )
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter())))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();

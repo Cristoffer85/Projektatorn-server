@@ -74,8 +74,7 @@ public class UserService {
             verificationToken.setExpiry(Instant.now().plus(24, ChronoUnit.HOURS));
             emailVerificationTokenRepository.save(verificationToken);
 
-            emailService.sendVerificationEmail(userUpdateDto.getEmail(), token);
-            // Do NOT update user.setEmail here!
+            emailService.sendVerificationEmail(userUpdateDto.getEmail(), token, username);
         }
 
         // Update other fields immediately

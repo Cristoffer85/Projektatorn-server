@@ -38,8 +38,8 @@ public class EmailService {
     }
 
     // ########## Email verification on registration and update ##########
-    public void sendVerificationEmail(String to, String token) {
-        String link = frontendUrl + "/verify-email?token=" + token;
+    public void sendVerificationEmail(String to, String token, String username) {
+        String link = frontendUrl + "/verify-email?token=" + token + "&username=" + username;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Verify your email address");
@@ -62,7 +62,7 @@ public class EmailService {
         verificationToken.setExpiry(Instant.now().plus(1, ChronoUnit.HOURS));
         emailVerificationTokenRepository.save(verificationToken);
 
-        sendVerificationEmail(newEmail, token); // Send to new email
+        sendVerificationEmail(newEmail, token, username); // Send to new email
     }
 
     // ########## Password forgot/reset email ##########
