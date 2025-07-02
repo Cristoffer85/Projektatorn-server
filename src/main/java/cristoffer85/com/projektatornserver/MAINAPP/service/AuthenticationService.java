@@ -1,8 +1,6 @@
 package cristoffer85.com.projektatornserver.MAINAPP.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -12,8 +10,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.LoginResponseDTO;
 import cristoffer85.com.projektatornserver.MAINAPP.model.Admin;
@@ -26,7 +22,6 @@ import cristoffer85.com.projektatornserver.MAINAPP.repository.RoleRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /*
@@ -161,14 +156,5 @@ public class AuthenticationService {
             userRepository.save(user);
         }
         emailVerificationTokenRepository.deleteByToken(token);
-    }
-
-    @GetMapping("/auth/is-verified")
-    public ResponseEntity<Boolean> isVerified(@RequestParam String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent()) {
-            return ResponseEntity.ok(userOpt.get().isVerified());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
     }
 }
