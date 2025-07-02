@@ -14,9 +14,9 @@ public class ProjectController {
     @Autowired
     private ProjectsInProgressService service;
 
-    @GetMapping("/load")
+    @GetMapping("/projects-in-progress/load")
     public List<ProjectsInProgress> loadProjects(@RequestParam String username) {
-        return service.loadProjects(username);
+        return service.getProjectsForUser(username);
     }
 
     @PostMapping("/add")

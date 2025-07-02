@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface ProjectsInProgressRepository extends MongoRepository<ProjectsInProgress, String> {
-    List<ProjectsInProgress> findByOwner(String owner);
+    List<ProjectsInProgress> findByOwnerOrFriend(String owner, String friend);
 }

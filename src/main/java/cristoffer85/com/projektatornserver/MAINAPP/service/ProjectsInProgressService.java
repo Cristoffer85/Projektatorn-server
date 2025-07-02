@@ -12,8 +12,8 @@ public class ProjectsInProgressService {
     @Autowired
     private ProjectsInProgressRepository repository;
 
-    public List<ProjectsInProgress> loadProjects(String username) {
-        return repository.findByOwner(username);
+    public List<ProjectsInProgress> getProjectsForUser(String username) {
+        return repository.findByOwnerOrFriend(username, username);
     }
 
     public ProjectsInProgress addProject(ProjectsInProgress project) {
