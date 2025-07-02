@@ -92,23 +92,31 @@ public class AuthenticationService {
 
     public LoginResponseDTO loginUser(String username, String password) {
         try {
-            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
-            String token = tokenService.generateJwt(auth);
+            Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password)
+            );
 
             Object userOrAdmin;
             Role role;
+
+            // Check if user exists and is verified
             if (userRepository.findByUsername(username).isPresent()) {
-                userOrAdmin = userRepository.findByUsername(username).get();
-                role = ((User) userOrAdmin).getAuthorities().iterator().next();
+                User user = userRepository.findByUsername(username).get();
+                if (!user.isVerified()) {
+                    throw new RuntimeException("Email not verified. Please check your inbox.");
+                }
+                userOrAdmin = user;
+                role = user.getAuthorities().iterator().next();
             } else if (adminRepository.findByUsername(username).isPresent()) {
-                userOrAdmin = adminRepository.findByUsername(username).get();
-                role = ((Admin) userOrAdmin).getAuthorities().iterator().next();
+                Admin admin = adminRepository.findByUsername(username).get();
+                userOrAdmin = admin;
+                role = admin.getAuthorities().iterator().next();
             } else {
                 userOrAdmin = null;
                 role = null;
             }
 
+            String token = tokenService.generateJwt(auth);
             return new LoginResponseDTO(userOrAdmin, token, role);
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Incorrect Credentials");
