@@ -1,5 +1,7 @@
 package cristoffer85.com.projektatornserver.MAINAPP.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +10,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.LoginResponseDTO;
@@ -57,35 +58,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
-        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
-            .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
-
-        User user = userRepository.findByUsername(verificationToken.getUsername())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setVerified(true);
-        userRepository.save(user);
-        emailVerificationTokenRepository.deleteByToken(token);
-
+    public ResponseEntity<String> verifyEmail(@RequestBody Map<String, String> body) {
+        authenticationService.verifyEmail(body.get("token"));
         return ResponseEntity.ok("Email verified! You can now log in.");
     }
 
     @PostMapping("/verify-email-change")
-    public ResponseEntity<String> verifyEmailChange(@RequestParam String token) {
-        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
-            .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
-
-        User user = userRepository.findByUsername(verificationToken.getUsername())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (user.getPendingEmail() != null) {
-            user.setEmail(user.getPendingEmail());
-            user.setPendingEmail(null);
-            userRepository.save(user);
-        }
-        emailVerificationTokenRepository.deleteByToken(token);
-
+    public ResponseEntity<String> verifyEmailChange(@RequestBody Map<String, String> body) {
+        authenticationService.verifyEmailChange(body.get("token"));
         return ResponseEntity.ok("Email address updated and verified!");
     }
 }

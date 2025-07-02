@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.LoginResponseDTO;
 import cristoffer85.com.projektatornserver.MAINAPP.model.Admin;
+import cristoffer85.com.projektatornserver.MAINAPP.model.EmailVerificationToken;
 import cristoffer85.com.projektatornserver.MAINAPP.model.Role;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.AdminRepository;
@@ -123,5 +124,32 @@ public class AuthenticationService {
         } catch (AuthenticationException e) {
             throw new InternalAuthenticationServiceException("Authentication failed", e);
         }
+    }
+
+    public void verifyEmail(String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+            .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
+
+        User user = userRepository.findByUsername(verificationToken.getUsername())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setVerified(true);
+        userRepository.save(user);
+        emailVerificationTokenRepository.deleteByToken(token);
+    }
+
+    public void verifyEmailChange(String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
+            .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
+
+        User user = userRepository.findByUsername(verificationToken.getUsername())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getPendingEmail() != null) {
+            user.setEmail(user.getPendingEmail());
+            user.setPendingEmail(null);
+            userRepository.save(user);
+        }
+        emailVerificationTokenRepository.deleteByToken(token);
     }
 }
