@@ -67,7 +67,7 @@ public class AuthenticationController {
         return ResponseEntity.ok("Email address updated and verified!");
     }
 
-    @GetMapping("/auth/is-verified")
+    @GetMapping("/is-verified")
     public ResponseEntity<Boolean> isVerified(@RequestParam String username) {
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isPresent()) {
