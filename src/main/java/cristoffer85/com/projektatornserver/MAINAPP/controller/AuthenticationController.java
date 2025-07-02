@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cristoffer85.com.projektatornserver.MAINAPP.dto.LoginResponseDTO;
 import cristoffer85.com.projektatornserver.MAINAPP.dto.RegistrationDTO;
-import cristoffer85.com.projektatornserver.MAINAPP.model.EmailVerificationToken;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
-import cristoffer85.com.projektatornserver.MAINAPP.repository.EmailVerificationTokenRepository;
-import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.service.AuthenticationService;
 
 @RestController
@@ -26,12 +23,6 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EmailVerificationTokenRepository emailVerificationTokenRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegistrationDTO body) {
