@@ -133,6 +133,11 @@ public class AuthenticationService {
         User user = userRepository.findByUsername(verificationToken.getUsername())
             .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (user.isVerified()) {
+            emailVerificationTokenRepository.deleteByToken(token);
+            throw new RuntimeException("User already verified");
+        }
+
         user.setVerified(true);
         userRepository.save(user);
         emailVerificationTokenRepository.deleteByToken(token);
