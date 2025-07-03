@@ -1,6 +1,7 @@
 package cristoffer85.com.projektatornserver.RABBITMQ.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,5 +94,10 @@ public class MessageController {
         if (user1 == null || user2 == null) return;
         String queueKey = user1.compareTo(user2) < 0 ? user1 + "_" + user2 : user2 + "_" + user1;
         msgConsumer.markMessagesAsRead(queueKey, user1);
+    }
+
+    @DeleteMapping("/delete/{messageId}")
+    public void deleteMessage(@PathVariable String messageId) {
+        chatMessageRepository.deleteById(messageId);
     }
 }
