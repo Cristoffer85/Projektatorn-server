@@ -34,18 +34,16 @@ public class ProjectService {
     }
 
     public Project sendProject(Project project) {
-        Project saved = repository.save(project);
-
         userRepository.findByUsername(project.getFriend()).ifPresent(friendUser -> {
             emailService.sendProjectNotificationEmail(
                 friendUser.getEmail(),
                 project.getOwner(),
                 project.getIdea(),
-                saved.getId()
+                project.getId() // Note: project.getId() may be null if not saved yet
             );
         });
 
-        return saved;
+        return project;
     }
 
     public CompletedProject addCompletedProject(CompletedProject completedProject) {
