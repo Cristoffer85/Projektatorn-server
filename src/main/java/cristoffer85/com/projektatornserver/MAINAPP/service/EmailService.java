@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ import cristoffer85.com.projektatornserver.MAINAPP.model.EmailVerificationToken;
 import cristoffer85.com.projektatornserver.MAINAPP.model.User;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.EmailVerificationTokenRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
@@ -76,20 +79,21 @@ public class EmailService {
     }
 
     // ########## New Project notification email ##########
-    public void sendProjectNotificationEmail(String to, String fromUser, String projectIdea, String projectId) {
+    public void sendProjectNotificationEmailHtml(String to, String fromUser, String projectIdea, String projectId) throws MessagingException {
         String subject = "New Project Shared With You";
         String projectLink = frontendUrl + "/projects/" + projectId;
-        String text = "Hi!\n\n"
-                + fromUser + " has shared a new project with you:\n\n"
-                + "----------------------------------------\n"
-                + projectIdea + "\n"
-                + "----------------------------------------\n\n"
-                + "View the project here:\n" + projectLink + "\n\n"
-                + "Log in to your account to view the details.";
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
+        String html = "<h2>Hi!</h2>"
+                + "<p><b>" + fromUser + "</b> has shared a new project with you:</p>"
+                + "<blockquote style='border-left:4px solid #ccc;padding-left:8px;'>" + projectIdea.replace("\n", "<br>") + "</blockquote>"
+                + "<p><a href='" + projectLink + "'>View the project here</a></p>"
+                + "<p>Log in to your account to view the details.</p>";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(html, true); // true = HTML
+
         mailSender.send(message);
     }
 }
