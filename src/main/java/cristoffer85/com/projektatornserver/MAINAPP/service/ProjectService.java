@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProjectService {
@@ -34,12 +35,16 @@ public class ProjectService {
     }
 
     public Project sendProject(Project project) {
+        // Generate a temporary UUID for this project
+        String tempId = UUID.randomUUID().toString();
+        project.setId(tempId);
+
         userRepository.findByUsername(project.getFriend()).ifPresent(friendUser -> {
             emailService.sendProjectNotificationEmail(
                 friendUser.getEmail(),
                 project.getOwner(),
                 project.getIdea(),
-                project.getId() // Note: project.getId() may be null if not saved yet
+                tempId
             );
         });
 
