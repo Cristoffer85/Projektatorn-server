@@ -60,7 +60,7 @@ public class SecurityConfiguration {
                 // = Anyone have access to:
                 auth.requestMatchers(
                     "/auth/**",  
-                                "/api/project-ideas/**", 
+                                "/api/googlegemini/**", 
                                 "/user/request-password-reset",
                                 "/user/reset-password",
                                 "/avatars/**")

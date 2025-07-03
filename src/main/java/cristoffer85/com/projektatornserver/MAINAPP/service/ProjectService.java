@@ -1,7 +1,7 @@
 package cristoffer85.com.projektatornserver.MAINAPP.service;
 
-import cristoffer85.com.projektatornserver.MAINAPP.model.ProjectsInProgress;
-import cristoffer85.com.projektatornserver.MAINAPP.repository.ProjectsInProgressRepository;
+import cristoffer85.com.projektatornserver.MAINAPP.model.Project;
+import cristoffer85.com.projektatornserver.MAINAPP.repository.ProjectRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProjectsInProgressService {
+public class ProjectService {
     @Autowired
-    private ProjectsInProgressRepository repository;
+    private ProjectRepository repository;
 
     @Autowired
     private UserRepository userRepository;
@@ -20,19 +20,19 @@ public class ProjectsInProgressService {
     @Autowired
     private EmailService emailService;
 
-    public List<ProjectsInProgress> getProjectsForUser(String username) {
+    public List<Project> getProjectsForUser(String username) {
         return repository.findByOwnerOrFriend(username, username);
     }
 
-    public ProjectsInProgress addProject(ProjectsInProgress project) {
-        ProjectsInProgress saved = repository.save(project);
+    public Project addProject(Project project) {
+        Project saved = repository.save(project);
 
-        // Find friend's email
         userRepository.findByUsername(project.getFriend()).ifPresent(friendUser -> {
             emailService.sendProjectNotificationEmail(
                 friendUser.getEmail(),
                 project.getOwner(),
-                project.getIdea()
+                project.getIdea(),
+                saved.getId()
             );
         });
 

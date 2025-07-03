@@ -76,11 +76,13 @@ public class EmailService {
     }
 
     // ########## New Project notification email ##########
-    public void sendProjectNotificationEmail(String to, String fromUser, String projectIdea) {
+    public void sendProjectNotificationEmail(String to, String fromUser, String projectIdea, String projectId) {
         String subject = "New Project Shared With You";
+        String projectLink = frontendUrl + "/projects/" + projectId;
         String text = "Hi!\n\n" +
-                    fromUser + " has shared a new project with you: \"" + projectIdea + "\".\n" +
-                    "Log in to your account to view the details.";
+                fromUser + " has shared a new project with you: \"" + projectIdea + "\".\n" +
+                "View the project here: " + projectLink + "\n\n" +
+                "Log in to your account to view the details.";
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);

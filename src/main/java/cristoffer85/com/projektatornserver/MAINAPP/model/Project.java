@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "projects_in_progress")
-public class ProjectsInProgress {
+public class Project {
     @Id
     private String id;
     private String friend;

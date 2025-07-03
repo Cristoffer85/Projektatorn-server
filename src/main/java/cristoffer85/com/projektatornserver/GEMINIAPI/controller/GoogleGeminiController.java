@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/project-ideas")
-public class ProjectIdeaController {
+@RequestMapping("/api/googlegemini")
+public class GoogleGeminiController {
 
     @Value("${google.gemini.api.key}")
     private String geminiApiKey;

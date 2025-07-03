@@ -1,26 +1,26 @@
 package cristoffer85.com.projektatornserver.MAINAPP.controller;
 
-import cristoffer85.com.projektatornserver.MAINAPP.model.ProjectsInProgress;
-import cristoffer85.com.projektatornserver.MAINAPP.service.ProjectsInProgressService;
+import cristoffer85.com.projektatornserver.MAINAPP.model.Project;
+import cristoffer85.com.projektatornserver.MAINAPP.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/projects-in-progress")
+@RequestMapping("/projects")
 public class ProjectController {
 
     @Autowired
-    private ProjectsInProgressService service;
+    private ProjectService service;
 
     @GetMapping("/load")
-    public List<ProjectsInProgress> loadProjects(@RequestParam String username) {
+    public List<Project> loadProjects(@RequestParam String username) {
         return service.getProjectsForUser(username);
     }
 
     @PostMapping("/add")
-    public ProjectsInProgress addProject(@RequestBody ProjectsInProgress project) {
+    public Project addProject(@RequestBody Project project) {
         return service.addProject(project);
     }
 
