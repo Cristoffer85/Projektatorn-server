@@ -1,6 +1,8 @@
 package cristoffer85.com.projektatornserver.MAINAPP.service;
 
+import cristoffer85.com.projektatornserver.MAINAPP.model.CompletedProject;
 import cristoffer85.com.projektatornserver.MAINAPP.model.Project;
+import cristoffer85.com.projektatornserver.MAINAPP.repository.CompletedProjectRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.ProjectRepository;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 
@@ -20,11 +22,18 @@ public class ProjectService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private CompletedProjectRepository completedProjectRepository;
+
     public List<Project> getProjectsForUser(String username) {
         return repository.findByOwnerOrFriend(username, username);
     }
 
     public Project addProject(Project project) {
+        return repository.save(project);
+    }
+
+    public Project sendProject(Project project) {
         Project saved = repository.save(project);
 
         userRepository.findByUsername(project.getFriend()).ifPresent(friendUser -> {
@@ -37,6 +46,14 @@ public class ProjectService {
         });
 
         return saved;
+    }
+
+    public CompletedProject addCompletedProject(CompletedProject completedProject) {
+        return completedProjectRepository.save(completedProject);
+    }
+
+    public List<CompletedProject> getCompletedProjects(String owner) {
+        return completedProjectRepository.findByOwner(owner);
     }
 
     public void removeProject(String id) {

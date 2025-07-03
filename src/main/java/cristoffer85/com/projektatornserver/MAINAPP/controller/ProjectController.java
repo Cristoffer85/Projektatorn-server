@@ -1,5 +1,6 @@
 package cristoffer85.com.projektatornserver.MAINAPP.controller;
 
+import cristoffer85.com.projektatornserver.MAINAPP.model.CompletedProject;
 import cristoffer85.com.projektatornserver.MAINAPP.model.Project;
 import cristoffer85.com.projektatornserver.MAINAPP.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,11 @@ public class ProjectController {
         return service.getProjectsForUser(username);
     }
 
+    @PostMapping("/send-to-friend")
+    public Project sendProject(@RequestBody Project project) {
+        return service.sendProject(project);
+    }
+
     @PostMapping("/add")
     public Project addProject(@RequestBody Project project) {
         return service.addProject(project);
@@ -27,5 +33,15 @@ public class ProjectController {
     @DeleteMapping("/remove/{id}")
     public void removeProject(@PathVariable String id) {
         service.removeProject(id);
+    }
+
+    @PostMapping("/history")
+    public CompletedProject addCompletedProject(@RequestBody CompletedProject completedProject) {
+        return service.addCompletedProject(completedProject);
+    }
+
+    @GetMapping("/history")
+    public List<CompletedProject> getCompletedProjects(@RequestParam String owner) {
+        return service.getCompletedProjects(owner);
     }
 }
