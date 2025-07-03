@@ -32,7 +32,9 @@ public class GoogleGeminiController {
 
         String prompt = String.format(
             "Generate 4 short, creative programming project ideas for a %s project using %s, suitable for a project lasting up to %s weeks. " +
-            "For each idea, include the project type, languages, and length in the description. List each idea as a short bullet point.",
+            "Each idea should be a single bullet point and include the project type, languages, length, and a short description, all in one line. " +
+            "Example: 'Backend: Emoji API with Sentiment Analysis | Languages: JavaScript | Length: 2 weeks | Description: Create an API that...'. " +
+            "List each idea as a single bullet point.",
             params.type, params.languages, params.length
         );
         
