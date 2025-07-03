@@ -61,11 +61,13 @@ public class AuthenticationController {
         return ResponseEntity.ok("Email verified! You can now log in.");
     }
 
+    /* Skip for now as i only can get these endpoints to work locally with postman, it just dont want to work with the frontend/deployed
     @PostMapping("/verify-email-change")
     public ResponseEntity<String> verifyEmailChange(@RequestBody Map<String, String> body) {
         authenticationService.verifyEmailChange(body.get("token"));
         return ResponseEntity.ok("Email address updated and verified!");
     }
+    */
 
     @GetMapping("/is-verified")
     public ResponseEntity<Boolean> isVerified(@RequestParam String username) {

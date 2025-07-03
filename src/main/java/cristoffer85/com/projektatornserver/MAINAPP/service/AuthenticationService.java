@@ -143,6 +143,7 @@ public class AuthenticationService {
         emailVerificationTokenRepository.deleteByToken(token);
     }
 
+    /* Skip for now as i only can get these endpoints to work locally with postman, it just dont want to work with the frontend/deployed
     public void verifyEmailChange(String token) {
         EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token)
             .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
@@ -157,4 +158,5 @@ public class AuthenticationService {
         }
         emailVerificationTokenRepository.deleteByToken(token);
     }
+    */
 }
