@@ -48,12 +48,17 @@ public class ProjectService {
     public PendingProject sendProject(PendingProject pendingProject) {
         PendingProject saved = pendingProjectRepository.save(pendingProject);
         userRepository.findByUsername(saved.getFriend()).ifPresent(friendUser -> {
-            emailService.sendProjectNotificationEmail(
-                friendUser.getEmail(),
-                saved.getOwner(),
-                saved.getIdea(),
-                saved.getId()
-            );
+            try {
+                emailService.sendProjectNotificationEmailHtml(
+                    friendUser.getEmail(),
+                    saved.getOwner(),
+                    saved.getIdea(),
+                    saved.getId()
+                );
+            } catch (jakarta.mail.MessagingException e) {
+                // Handle exception (log, rethrow, etc.)
+                e.printStackTrace();
+            }
         });
         return saved;
     }
