@@ -80,27 +80,17 @@ public class EmailService {
 
     // ########## New Project notification email ##########
     public void sendProjectNotificationEmailHtml(String to, String fromUser, String projectIdea, String projectId) throws MessagingException {
-        String subject = "New Project Shared With You";
+        String subject = "New Project Ideas Shared With You";
         String projectLink = frontendUrl + "/projects/" + projectId;
 
         // Convert **bold** to <b>bold</b>
         String htmlProjectIdea = projectIdea
+            .replace("\n", "<br>")
             .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>");
 
-        // Split projects by double linebreak (adjust if your delimiter is different)
-        String[] projects = htmlProjectIdea.split("(<br>\\s*){2,}|\\r?\\n\\r?\\n");
-        StringBuilder formatted = new StringBuilder();
-        formatted.append("<b>Choose (either):</b><br><br>");
-        for (int i = 0; i < projects.length; i++) {
-            formatted.append(projects[i].trim());
-            if (i == 0 && projects.length > 1) {
-                formatted.append("<br><br>or<br><br>");
-            }
-        }
-
         String html = "<h2>Hi!</h2>"
-                + "<p><b>" + fromUser + "</b> has shared a new project with you</p>"
-                + "<blockquote style='border-left:4px solid #ccc;padding-left:8px;'>" + formatted.toString() + "</blockquote>"
+                + "<p><b>" + fromUser + "</b> has shared a new project with you - choose one project from headers below:</p>"
+                + "<blockquote style='border-left:4px solid #ccc;padding-left:8px;'>" + htmlProjectIdea + "</blockquote>"
                 + "<p><a href='" + projectLink + "'>Log in to your account to view the project here</a></p>";
 
         MimeMessage message = mailSender.createMimeMessage();
