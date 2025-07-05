@@ -82,9 +82,15 @@ public class EmailService {
     public void sendProjectNotificationEmailHtml(String to, String fromUser, String projectIdea, String projectId) throws MessagingException {
         String subject = "New Project Shared With You";
         String projectLink = frontendUrl + "/projects/" + projectId;
+
+        // Convert **bold** to <b>bold</b>
+        String htmlProjectIdea = projectIdea
+            .replace("\n", "<br>")
+            .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>");
+
         String html = "<h2>Hi!</h2>"
                 + "<p><b>" + fromUser + "</b> has shared a new project with you:</p>"
-                + "<blockquote style='border-left:4px solid #ccc;padding-left:8px;'>" + projectIdea.replace("\n", "<br>") + "</blockquote>"
+                + "<blockquote style='border-left:4px solid #ccc;padding-left:8px;'>" + htmlProjectIdea + "</blockquote>"
                 + "<p><a href='" + projectLink + "'>View the project here</a></p>"
                 + "<p>Log in to your account to view the details.</p>";
 
