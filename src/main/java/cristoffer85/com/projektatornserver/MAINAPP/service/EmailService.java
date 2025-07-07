@@ -22,8 +22,8 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService {
 
-    @Value("${app.frontend.origins}")
-    private String frontendOrigins;
+    @Value("${app.frontend.origin}")
+    private String frontendOrigin;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -42,7 +42,7 @@ public class EmailService {
 
     // ########## Email verification on registration and update ##########
     public void sendVerificationEmail(String to, String token, String username) {
-        String link = frontendOrigins + "/verify-email?token=" + token + "&username=" + username;
+        String link = frontendOrigin + "/verify-email?token=" + token + "&username=" + username;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Verify your email address");
@@ -70,7 +70,7 @@ public class EmailService {
 
     // ########## Password forgot/reset email ##########
     public void sendPasswordResetEmail(String to, String token) {
-        String resetLink = frontendOrigins + "/reset-password?token=" + token;
+        String resetLink = frontendOrigin + "/reset-password?token=" + token;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Password Reset Request");
@@ -81,7 +81,7 @@ public class EmailService {
     // ########## New Project notification email ##########
     public void sendProjectNotificationEmailHtml(String to, String fromUser, String projectIdea, String projectId) throws MessagingException {
         String subject = "New Project Ideas Shared With You";
-        String projectLink = frontendOrigins + "/projects/" + projectId;
+        String projectLink = frontendOrigin + "/projects/" + projectId;
 
         // Convert **bold** to <b>bold</b>
         String htmlProjectIdea = projectIdea

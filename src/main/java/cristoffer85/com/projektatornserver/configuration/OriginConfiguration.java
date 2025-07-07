@@ -9,13 +9,13 @@ import org.springframework.lang.NonNull;
 @Configuration
 public class OriginConfiguration implements WebMvcConfigurer {
 
-    @Value("${app.frontend.origins}")
-    private String[] frontendOrigins;
+    @Value("${app.frontend.origin}")
+    private String frontendOrigin;
 
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(frontendOrigins)
+                .allowedOrigins(frontendOrigin)
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
