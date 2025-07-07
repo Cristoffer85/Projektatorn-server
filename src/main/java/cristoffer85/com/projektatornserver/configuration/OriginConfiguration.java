@@ -15,7 +15,8 @@ public class OriginConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(frontendUrl)
+                .allowedOriginPatterns("*")
+                //.allowedOrigins(frontendUrl)
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
