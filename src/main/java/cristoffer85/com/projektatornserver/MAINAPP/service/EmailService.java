@@ -1,8 +1,6 @@
 package cristoffer85.com.projektatornserver.MAINAPP.service;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,10 +10,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import cristoffer85.com.projektatornserver.MAINAPP.model.EmailVerificationToken;
-import cristoffer85.com.projektatornserver.MAINAPP.model.User;
 import cristoffer85.com.projektatornserver.MAINAPP.repository.EmailVerificationTokenRepository;
-import cristoffer85.com.projektatornserver.MAINAPP.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -31,9 +26,6 @@ public class EmailService {
     @Autowired
     private EmailVerificationTokenRepository emailVerificationTokenRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @Scheduled(fixedRate = 3600000)
     public void cleanUpExpiredEmailVerificationTokens() {
         Instant now = Instant.now();
@@ -47,9 +39,15 @@ public class EmailService {
         message.setTo(to);
         message.setSubject("Verify your email address");
         message.setText("Please verify your email by clicking the following link: " + link);
-        mailSender.send(message);
+        
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
 
+    /*    Commented for now since email change is not implemented/solved yet due to frontend issues with email change. Works fine locally, but..
     public void requestEmailChange(String username, String newEmail) {
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
@@ -67,6 +65,7 @@ public class EmailService {
 
         sendVerificationEmail(newEmail, token, username); // Send to new email
     }
+    */
 
     // ########## Password forgot/reset email ##########
     public void sendPasswordResetEmail(String to, String token) {
@@ -75,7 +74,13 @@ public class EmailService {
         message.setTo(to);
         message.setSubject("Password Reset Request");
         message.setText("Click the following link to reset your password: " + resetLink);
-        mailSender.send(message);
+        
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
     }
 
     // ########## New Project notification email ##########
@@ -99,6 +104,12 @@ public class EmailService {
         helper.setSubject(subject);
         helper.setText(html, true); // true = HTML
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            // Log the error and optionally notify admin or queue for retry
+            System.err.println("Failed to send password reset email: " + e.getMessage());
+            // Optionally: add to a retry queue or notify admin
+        }
     }
 }
