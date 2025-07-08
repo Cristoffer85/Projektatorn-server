@@ -3,6 +3,8 @@
 ## Description
 Server application using Java Spring Boot and RabbitMQ for Projektatorn - an application for generating realtime projects for you and friends  coupled to programming. Using pre-prompted Google Gemini AI-API to generate ideas and send back so you can choose which ideas you want to send to your friends all structured in a little better flow. Chat with your friends to discuss all the while everything is securely E2E-encrypted (nothing can be read by server or in-between) Links to share and start project on Github of course included at end.
 
+[[Public] Client repository](https://github.com/Cristoffer85/Projektatorn-client)
+
 ## Features
 - Generate realtime programming ideas on mainpage
 - Create user (password securely encrypted through RSA256bit) email verification required through smtp
